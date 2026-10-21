@@ -22,6 +22,7 @@ import {
 import { bangkokToday } from '@/lib/time'
 import { readOpenDrafts, type Draft } from '@/lib/drafts'
 import { BadImage, imageHistoryLine, readInlineImage } from '@/lib/chat/image'
+import { takeDemoQuota } from '@/lib/demoServer'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -77,6 +78,12 @@ export async function POST(request: NextRequest) {
   }
   if (text.length > 2000) {
     return Response.json({ ok: false, error: 'ข้อความยาวเกินไป' }, { status: 400 })
+  }
+
+  // บัญชีตัวอย่างหักโควตาหลังผ่านด่านอินพุต — คำขอที่ถูกปฏิเสธไม่ควรเสียสิทธิ์ (lib/demo.ts)
+  const demoDenied = await takeDemoQuota(supabase, 'chat')
+  if (demoDenied) {
+    return Response.json({ ok: false, error: demoDenied }, { status: 429 })
   }
 
   const history = Array.isArray(body.history) ? (body.history as StoredMessage[]) : []

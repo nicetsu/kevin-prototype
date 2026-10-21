@@ -45,6 +45,14 @@ type Line = Row & { sortAt: number }
  */
 const LOOKAHEAD_DAYS = 14
 
+/** "งานที่เหลือ" โชว์กี่ชิ้นก่อนกด "แสดงเพิ่ม" (เจ้าของเคาะ 21 ต.ค. 2026) */
+const REST_SHOWN = 3
+
+/** วันไทย YYYY-MM-DD ของจุดเวลาหนึ่ง */
+function dayKeyOf(iso: string) {
+  return new Date(new Date(iso).getTime() + 7 * 3600 * 1000).toISOString().slice(0, 10)
+}
+
 /**
  * เวลาปัจจุบัน ณ ตอนที่ request เข้ามา
  *
@@ -69,7 +77,7 @@ export default async function TodayPage() {
   const supabase = await createClient()
   const { start, end, dateKey } = bangkokToday()
 
-  const [entryRes, itemRes] = await Promise.all([
+  const [entryRes, itemRes, restRes] = await Promise.all([
     // คาบเรียน + event รูปเดียวกัน · event ข้ามคืนถูกหั่นเป็นบล็อกรายวันมาแล้ว
     supabase.rpc('calendar_entries', {
       p_from: dateKey,
@@ -88,9 +96,21 @@ export default async function TodayPage() {
           // หายจากทุกหน้าทันทีที่ข้ามวัน · ยิ่งหายเร็วขึ้นตั้งแต่มีเก็บกวาดอัตโนมัติ
           `remind_at.lt.${start.toISOString()}`
       ),
+    /*
+     * "งานที่เหลือ" — task ที่ยังไม่เสร็จ และครบกำหนดตั้งแต่พรุ่งนี้ไป หรือไม่มีกำหนด
+     * (เจ้าของเคาะ 21 ต.ค. 2026) · งานของวันนี้กับที่เลยกำหนดอยู่ในกลุ่มข้างบนแล้ว
+     * จึงไม่นับซ้ำ · ไม่รวม reminder เพราะการเตือนในอนาคตไม่ใช่ "งาน" ที่ต้องทำ
+     */
+    supabase
+      .from('items')
+      .select('id, project_id, type, title, body, due_at, remind_at, done_at, created_at, projects(name)')
+      .is('archived_at', null)
+      .is('done_at', null)
+      .eq('type', 'task')
+      .or(`due_at.gte.${end.toISOString()},due_at.is.null`),
   ])
 
-  const loadError = entryRes.error ?? itemRes.error
+  const loadError = entryRes.error ?? itemRes.error ?? restRes.error
   if (loadError) {
     return (
       <main className="wrap">
@@ -151,7 +171,19 @@ export default async function TodayPage() {
   // ตัดบล็อกของวันอื่นทิ้ง — ต่างจาก hero ที่มองข้ามวันได้
   const todayEntries = entries.filter((e) => e.occurs_on === dateKey)
 
-  const bookedLines: Line[] = todayEntries.map((e) => {
+  /*
+   * คาบและกิจกรรมของวันนี้จบหมดแล้ว (หรือวันนี้ไม่มีเลย) → โชว์ของพรุ่งนี้แทน
+   * (เจ้าของเคาะ 21 ต.ค. 2026) · ตัดสินจากเวลาจบล้วน ๆ — อันที่กด "ไม่ไป" แต่ยัง
+   * ไม่ถึงเวลาจบยังนับว่าเหลือ เพื่อให้ปุ่มกู้คืนของมันยังอยู่บนหน้านี้
+   * · งานและการเตือนของวันนี้ยังอยู่ในกลุ่ม "วันนี้" เหมือนเดิม ย้ายแค่ปฏิทิน
+   * · พรุ่งนี้ว่างก็ไม่สลับ คาบที่จบแล้วของวันนี้ยังโชว์อยู่ ดีกว่าหน้าโล่ง
+   */
+  const tomorrowKey = addDays(dateKey, 1)
+  const tomorrowAll = entries.filter((e) => e.occurs_on === tomorrowKey)
+  const todayOver = tomorrowAll.length > 0 && todayEntries.every((e) => entryEndMs(e) <= now)
+  const tomorrowEntries = todayOver ? tomorrowAll : []
+
+  const toBookedLine = (e: CalendarEntry): Line => {
     const span = spanOf(e)
     const multi = span.days > 1
 
@@ -185,7 +217,10 @@ export default async function TodayPage() {
         ? { kind: e.kind, sourceId: e.source_id, occursOn: e.occurs_on }
         : null,
     }
-  })
+  }
+
+  const bookedLines = (todayOver ? [] : todayEntries).map(toBookedLine)
+  const tomorrowLines = tomorrowEntries.map(toBookedLine).sort((a, b) => a.sortAt - b.sortAt)
 
   // ---- hero ------------------------------------------------------------
   // อันถัดไป = อันแรกที่ยังไม่จบ **ข้ามวันได้**
@@ -316,7 +351,46 @@ export default async function TodayPage() {
   missed.sort((a, b) => b.sortAt - a.sortAt)   // ล่าสุดก่อน · ที่พลาดเมื่อกี้สำคัญกว่าที่พลาดนานแล้ว
   const timeline = [...bookedLines, ...today].sort(byTime)
 
+  // ---- งานที่เหลือ ------------------------------------------------------
+  // มีกำหนดเรียงใกล้ไปไกล · ไม่มีกำหนดอยู่ท้ายสุด เรียงตามที่สร้างก่อน
+  const rest = ((restRes.data ?? []) as unknown as (Item & { created_at: string })[])
+    .map((it) => ({
+      it,
+      at: it.due_at ? new Date(it.due_at).getTime() : Infinity,
+      made: new Date(it.created_at).getTime(),
+    }))
+    .sort((a, b) => a.at - b.at || a.made - b.made)
+
+  const restLines: Line[] = rest.map(({ it, at }) => {
+    const project = it.projects?.name ?? '—'
+    const when = it.due_at
+      ? `${dayAheadLabel(dateKey, dayKeyOf(it.due_at)) ?? ''} ${bangkokTime(it.due_at)}`.trim()
+      : 'ไม่มีกำหนด'
+    return {
+      id: it.id,
+      sortAt: at,
+      color: it.due_at ? 'var(--due)' : 'var(--task)',
+      title: it.title,
+      meta: `${project} · ${when}`,
+      done: false,
+      checkable: true,
+      tag: null,
+      panel: {
+        id: it.id,
+        projectId: it.project_id,
+        type: it.type,
+        title: it.title,
+        body: it.body,
+        at: it.due_at,
+        done: false,
+        projectName: project,
+      },
+    }
+  })
+
+  // วันนี้มีคาบแต่จบหมดแล้ว ไม่ใช่ "วันนี้ว่าง"
   const nothing = overdue.length === 0 && timeline.length === 0 && missed.length === 0
+    && todayEntries.length === 0
 
   return (
     <Content>
@@ -359,6 +433,26 @@ export default async function TodayPage() {
               <span>{timeline.length}</span>
             </div>
             <ItemList rows={timeline} />
+          </>
+        )}
+
+        {tomorrowLines.length > 0 && (
+          <>
+            <div className="sec">
+              <span>พรุ่งนี้</span>
+              <span>{tomorrowLines.length}</span>
+            </div>
+            <ItemList rows={tomorrowLines} />
+          </>
+        )}
+
+        {restLines.length > 0 && (
+          <>
+            <div className="sec">
+              <span>งานที่เหลือ</span>
+              <span>{restLines.length}</span>
+            </div>
+            <ItemList rows={restLines} limit={REST_SHOWN} />
           </>
         )}
       </main>

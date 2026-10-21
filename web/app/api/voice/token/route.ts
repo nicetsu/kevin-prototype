@@ -16,6 +16,8 @@ import { readLang } from '@/lib/ai/lang'
 import { resolveVoice } from '@/lib/ai/voices'
 import { bangkokToday } from '@/lib/time'
 import { classifyRateLimit, rateLimitMessage } from '@/lib/chat/quota'
+import { isDemoSession, takeDemoQuota } from '@/lib/demoServer'
+import { DEMO_CALL_MS } from '@/lib/demo'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -38,6 +40,18 @@ export async function POST(request: Request) {
   if (!key) {
     return Response.json({ ok: false, error: 'ยังไม่ได้ตั้ง GEMINI_API_KEY ฝั่งเซิร์ฟเวอร์' }, { status: 500 })
   }
+
+  /*
+   * บัญชีตัวอย่าง: หักหนึ่งสายต่อ token หนึ่งใบ (สายทดสอบเสียงในหน้าตั้งค่าก็นับ)
+   * และสายสั้นกว่าบัญชีจริง · `quota: false` เพราะธงนั้นดันผู้ใช้ไปโหมดแชต
+   * ซึ่งมีโควตาของตัวเองแยกอยู่ (lib/demo.ts)
+   */
+  const demo = await isDemoSession(supabase)
+  const demoDenied = demo ? await takeDemoQuota(supabase, 'voice') : null
+  if (demoDenied) {
+    return Response.json({ ok: false, quota: false, error: demoDenied }, { status: 429 })
+  }
+  const lifetime = demo ? DEMO_CALL_MS : LIFETIME_MS
 
   /*
    * ภาษาและเสียงถูกล็อกไปกับ token · เปลี่ยนกลางสายไม่ได้ ต้องวางแล้วโทรใหม่
@@ -64,7 +78,7 @@ export async function POST(request: Request) {
     headers: { 'content-type': 'application/json', 'x-goog-api-key': key },
     body: JSON.stringify({
       uses: 1,
-      expireTime: new Date(now + LIFETIME_MS).toISOString(),
+      expireTime: new Date(now + lifetime).toISOString(),
       newSessionExpireTime: new Date(now + START_WINDOW_MS).toISOString(),
       // ⚠️ ชื่อฟิลด์คือ `bidiGenerateContentSetup` และรูปข้างในเป็นแบบเดียวกับ
       //    setup message ของ WebSocket เป๊ะ ๆ — ไม่ได้ห่อด้วย `config` อีกชั้น
@@ -126,6 +140,6 @@ export async function POST(request: Request) {
     model: VOICE_MODEL,
     voice: voice || 'default',
     // เบราว์เซอร์ใช้ตัดสินว่าต้องขอใบใหม่ก่อนต่อสายรอบถัดไปไหม
-    expiresAt: new Date(now + LIFETIME_MS).toISOString(),
+    expiresAt: new Date(now + lifetime).toISOString(),
   })
 }

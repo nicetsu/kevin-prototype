@@ -363,6 +363,9 @@ html, body { margin: 0; padding: 0; }
 }
 .sec:first-of-type { margin-top: 0; }
 
+/* ปุ่ม "แสดงเพิ่ม" ใต้รายการที่ตัดไว้ (ItemList `limit`) — เต็มความกว้างให้นิ้วโป้งกดง่าย */
+.list-more { width: 100%; margin-top: 0.4rem; }
+
 /* ---- แถวรายการ · เส้นคั่นบาง ไม่ใช่การ์ดแยกใบ ---- */
 .row {
   display: flex; align-items: flex-start; gap: 0.7rem;
@@ -2532,3 +2535,30 @@ a.hero__afterBody:hover .hero__afterTop { color: var(--brand); }
   color: var(--faint); line-height: 1.55;
 }
 .set .seg button:disabled { opacity: 0.45; cursor: default; }
+
+/* =====================================================================
+ * บัญชีตัวอย่าง (demo) — 21 ต.ค. 2026 · lib/demo.ts
+ * ===================================================================== */
+/* แถบบนสุดตลอดเวลาที่อยู่ใน demo · อยู่ใน flow ไม่ลอย จะได้ไม่บังหัวหน้า */
+.demo-bar {
+  display: flex; align-items: center; justify-content: space-between; gap: 0.6rem;
+  padding: calc(env(safe-area-inset-top) + 0.45rem) 1rem 0.45rem;
+  background: var(--surface); border-bottom: 1px solid var(--line);
+  color: var(--muted); font-size: var(--s--1); line-height: 1.4;
+}
+.demo-bar form { flex: none; }
+.demo-bar__out {
+  background: none; border: 1px solid var(--line); border-radius: var(--r-pill);
+  color: var(--brand); font: inherit; padding: 0.2rem 0.75rem; cursor: pointer;
+}
+
+/* หน้า login: เส้นคั่น "หรือ" แล้วปุ่มลองบัญชีตัวอย่าง */
+.login-or {
+  display: flex; align-items: center; gap: 0.7rem; margin: 1.6rem 0 1rem;
+  color: var(--faint); font-size: var(--s--1);
+}
+.login-or::before, .login-or::after { content: ''; flex: 1; border-top: 1px solid var(--line); }
+
+.demo-info { margin: 0 0 1rem; padding-left: 1.1rem; color: var(--muted); font-size: var(--s-0); line-height: 1.6; }
+.demo-info li + li { margin-top: 0.45rem; }
+.demo-info strong { color: var(--ink); font-weight: 600; }

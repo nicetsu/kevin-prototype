@@ -79,9 +79,17 @@ function flipId(r: Row): string {
   return keyOf(r) ?? `${r.color}|${r.title}`
 }
 
-export default function ItemList({ rows }: { rows: Row[] }) {
+/**
+ * `limit` = โชว์แค่ N แถวแรก แล้วมีปุ่ม "แสดงเพิ่ม" กางที่เหลือในที่เดิม
+ *
+ * ตัดหลังกรองแถวที่ถูกเก็บเข้าคลังแล้ว — เก็บแถวที่โชว์อยู่ออกหนึ่งแถว
+ * แถวถัดไปจะขึ้นมาแทนทันที ไม่ต้องรอ `router.refresh()`
+ * · ห้ามใช้คู่กับแถว `movable` (ลากข้ามแถวที่ซ่อนอยู่ไม่ได้)
+ */
+export default function ItemList({ rows, limit }: { rows: Row[]; limit?: number }) {
   const router = useRouter()
   const [, startTransition] = useTransition()
+  const [expanded, setExpanded] = useState(false)
 
   // ติ๊กแล้วต้องขยับทันที ไม่รอเซิร์ฟเวอร์
   const [optimistic, setOptimistic] = useState<Record<string, boolean>>({})
@@ -199,6 +207,9 @@ export default function ItemList({ rows }: { rows: Row[] }) {
 
   const canMove = order.length > 1
 
+  const cut = limit !== undefined && !expanded && shown.length > limit
+  const drawn = cut ? shown.slice(0, limit) : shown
+
   /*
    * ให้แถวที่ย้ายตำแหน่งเดินทางแทนที่จะกระโดด
    *
@@ -207,6 +218,8 @@ export default function ItemList({ rows }: { rows: Row[] }) {
    * การวัดตำแหน่งทุกรอบ render จึงจับได้ทุกสาเหตุโดยไม่ต้องรู้ว่าใครสั่งย้าย
    */
   const listRef = useRef<HTMLDivElement | null>(null)
+  // คีย์จาก `shown` ไม่ใช่ `drawn` — กด "แสดงเพิ่ม" ต้องไม่นับเป็นการย้ายแถว
+  // ไม่งั้นเบราว์เซอร์เลื่อนจอตามปุ่มที่ถูกดันลง แล้วแถวเดิมลอยมาจากผิดที่
   useFlip(listRef, shown.map(flipId).join('~'))
 
   function commit(next: string[], moved: string, title: string) {
@@ -278,7 +291,7 @@ export default function ItemList({ rows }: { rows: Row[] }) {
       {shown.length === 0 && <p className="none">ยังไม่มี</p>}
 
       <div data-list ref={listRef}>
-        {shown.map((r, i) => {
+        {drawn.map((r, i) => {
           const done = isDone(r)
           const movable = Boolean(canMove && r.movable && r.id)
           return (
@@ -386,6 +399,17 @@ export default function ItemList({ rows }: { rows: Row[] }) {
           )
         })}
       </div>
+
+      {limit !== undefined && shown.length > limit && (
+        <button
+          type="button"
+          className="btn btn--quiet list-more"
+          aria-expanded={expanded}
+          onClick={() => setExpanded((v) => !v)}
+        >
+          {expanded ? 'แสดงน้อยลง' : `แสดงเพิ่ม (${shown.length - limit})`}
+        </button>
+      )}
 
       <span className="sr-only" role="status" aria-live="polite">{say}</span>
 

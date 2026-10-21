@@ -1,7 +1,10 @@
 'use server'
 
+import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { isDemoSession } from '@/lib/demoServer'
+import { DEMO_COOKIE } from '@/lib/demo'
 
 /**
  * ออกจากระบบ
@@ -15,6 +18,10 @@ import { createClient } from '@/lib/supabase/server'
  */
 export async function signOut(): Promise<void> {
   const supabase = await createClient()
-  await supabase.auth.signOut()
+  // ⚠️ บัญชีตัวอย่างใช้ร่วมกัน — ค่าตั้งต้น `global` เพิกถอน session **ของทุกคน**
+  //    ที่อยู่ใน demo พร้อมกัน · ออกแค่เครื่องนี้ (lib/demo.ts)
+  const demo = await isDemoSession(supabase)
+  await supabase.auth.signOut(demo ? { scope: 'local' } : undefined)
+  ;(await cookies()).delete(DEMO_COOKIE)
   redirect('/login')
 }

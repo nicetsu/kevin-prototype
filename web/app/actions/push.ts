@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient, currentUserId } from '@/lib/supabase/server'
+import { isDemoSession } from '@/lib/demoServer'
 
 export type Result = { ok: true } | { ok: false; error: string }
 
@@ -14,6 +15,12 @@ export async function saveSubscription(sub: {
   const supabase = await createClient()
   const userId = await currentUserId(supabase)   // upsert ต้องระบุเจ้าของ
   if (!userId) return { ok: false, error: 'ยังไม่ได้เข้าสู่ระบบ' }
+
+  // บัญชีตัวอย่างใช้ร่วมกัน — เปิดแจ้งเตือนได้เมื่อไหร่ การเตือนของ demo จะเด้งไปที่
+  // มือถือของคนแปลกหน้าที่เคยกดไว้ จนกว่าจะมีคนกดเข้า demo รอบถัดไป (lib/demo.ts)
+  if (await isDemoSession(supabase)) {
+    return { ok: false, error: 'บัญชีตัวอย่างเปิดการแจ้งเตือนไม่ได้ · สมัครบัญชีจริงเพื่อใช้ฟีเจอร์นี้' }
+  }
 
   // unique คือ (user_id, endpoint) — เครื่องเดิม **ของคนเดิม** กดซ้ำให้ทับของเดิม
   //

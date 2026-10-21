@@ -122,6 +122,12 @@ prompt ที่แก้เคสหนึ่งแล้วทำอีกเ�
   ของตัวเองสร้าง client** endpoint จะเปิดให้ใครก็ได้อีกครั้งโดยที่ทุกอย่างยังดูปกติ
   · **ห้ามเทียบ token กับ env** (cron ส่ง JWT รุ่นเก่า 219 ตัว · env เป็น `sb_secret_…`
   41 ตัว ไม่มีทางตรงกัน) · **ห้ามเปิด `verify_jwt`** (คนละชนิดกับ token ที่ cron ส่ง)
+- **บัญชีตัวอย่าง (demo · `lib/demo.ts`) — ตัดสินว่าเป็น demo จากอีเมลใน JWT
+  (`DEMO_EMAIL`) ห้ามใช้ cookie `kevin_demo` คุมอะไร** (ลบได้จากคอนโซล = Gemini
+  ไม่จำกัด) · `signOut()` ของ demo ต้อง `scope: 'local'` ไม่งั้นเตะทุกคนที่ดูอยู่
+  · trigger `lock_demo_credentials` บน `auth.users` **ต้องเป็น security definer**
+  (invoker = กันไม่ได้เงียบ ๆ หรือทำล็อกอินพังทั้งระบบ) · `reset_demo()` เช็ก
+  `current_user` ไม่ใช่ `session_user` · `DEMO_PASSWORD` ห้ามมี `NEXT_PUBLIC_`
 - **ลบ `push_subscriptions` ต้องลบด้วย `id` ไม่ใช่ `endpoint`** — unique เป็น
   `(user_id, endpoint)` สองบัญชีบนเครื่องเดียวกันใช้ endpoint เดียวกันได้
 

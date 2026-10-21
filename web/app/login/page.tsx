@@ -16,6 +16,8 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { enterDemo } from '@/app/actions/demo'
+import { DEMO_COOKIE, DEMO_LIMITS, DEMO_CALL_MS, DEMO_TAB_KEY } from '@/lib/demo'
 
 type Mode = 'in' | 'up'
 
@@ -35,6 +37,9 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null)
   const [sent, setSent] = useState(false)
   const [busy, setBusy] = useState(false)
+  const [demoOpen, setDemoOpen] = useState(false)
+  const [demoBusy, setDemoBusy] = useState(false)
+  const [demoError, setDemoError] = useState<string | null>(null)
 
   /** เปลี่ยนโหมดแล้วล้างสิ่งที่ค้างจากโหมดก่อน — ข้อความผิดของอีกโหมดไม่ควรค้างอยู่ */
   function switchTo(next: Mode) {
@@ -71,6 +76,24 @@ export default function LoginPage() {
       return
     }
 
+    // เคยเข้า demo ในแท็บอื่นค้างไว้ · ไม่ล้างแล้ว DemoGuard จะเตะบัญชีจริงออก
+    document.cookie = `${DEMO_COOKIE}=; Max-Age=0; path=/`
+    router.replace('/')
+    router.refresh()
+  }
+
+  /** บัญชีตัวอย่าง · ล็อกอินกับล้างข้อมูลทำฝั่งเซิร์ฟเวอร์ (app/actions/demo.ts) */
+  async function startDemo() {
+    setDemoBusy(true)
+    setDemoError(null)
+    const res = await enterDemo()
+    if (!res.ok) {
+      setDemoError(res.error)
+      setDemoBusy(false)
+      return
+    }
+    // ธงของแท็บนี้ · ไม่มีธง = เปิดแอปใหม่ → DemoGuard พาออก (components/DemoGuard.tsx)
+    try { sessionStorage.setItem(DEMO_TAB_KEY, '1') } catch { /* DemoGuard ปล่อยผ่านเอง */ }
     router.replace('/')
     router.refresh()
   }
@@ -271,6 +294,48 @@ export default function LoginPage() {
               : 'สมัคร'}
         </button>
       </form>
+
+      <div className="login-or">ยังไม่มีบัญชี</div>
+      <button
+        className="btn btn--ghost"
+        type="button"
+        style={{ width: '100%' }}
+        onClick={() => { setDemoError(null); setDemoOpen(true) }}
+      >
+        ลองใช้บัญชีตัวอย่าง
+      </button>
+
+      {demoOpen && (
+        <div className="sheet" role="dialog" aria-modal="true" aria-label="บัญชีตัวอย่าง"
+          onClick={(e) => { if (e.target === e.currentTarget && !demoBusy) setDemoOpen(false) }}>
+          <div className="sheet__panel">
+            <div className="sheet__head">
+              <strong>ก่อนเข้าบัญชีตัวอย่าง</strong>
+            </div>
+            <ul className="demo-info">
+              <li>เป็นบัญชีของ<strong>นักศึกษาสมมติ</strong> มีตารางเรียน งาน และกิจกรรมให้ลองกดดู เพิ่ม แก้ ติ๊กเสร็จได้ทุกอย่าง</li>
+              <li><strong>ทุกคนใช้บัญชีนี้ร่วมกัน</strong> ถ้ามีคนเข้าพร้อมกันจะเห็นสิ่งที่อีกคนแก้ · อย่าใส่ข้อมูลส่วนตัว</li>
+              <li>ทุกครั้งที่มีคนกดเข้า <strong>ข้อมูลจะกลับเป็นตัวอย่างเดิม</strong> สิ่งที่คุณเพิ่มไว้จะหายไป</li>
+              <li>ผู้ช่วย KeviN พิมพ์คุยได้ <strong>{DEMO_LIMITS.chat.perDevice} ข้อความ</strong> และโทรได้ <strong>{DEMO_LIMITS.voice.perDevice} ครั้ง</strong> ต่อวันต่อเครื่อง (สายละไม่เกิน {DEMO_CALL_MS / 60_000} นาที)</li>
+              <li>การแจ้งเตือนบนมือถือเปิดในบัญชีนี้ไม่ได้</li>
+              <li><strong>ปิดแอปหรือเปิดแท็บใหม่ = ออกจากบัญชีตัวอย่าง</strong> ต้องกดเข้าใหม่จากหน้านี้</li>
+            </ul>
+
+            {demoError && (
+              <p className="alert" style={{ margin: '0 0 0.9rem' }} role="alert">{demoError}</p>
+            )}
+
+            <div className="actions">
+              <button className="btn" type="button" onClick={startDemo} disabled={demoBusy}>
+                {demoBusy ? 'กำลังเตรียมข้อมูล…' : 'เข้าบัญชีตัวอย่าง'}
+              </button>
+              <button className="btn btn--quiet" type="button" onClick={() => setDemoOpen(false)} disabled={demoBusy}>
+                ยกเลิก
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   )
 }

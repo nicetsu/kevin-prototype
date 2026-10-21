@@ -3,6 +3,7 @@ import { Inter, Noto_Sans_Thai } from 'next/font/google'
 import Nav from '@/components/Nav'
 import QuickAddMount from '@/components/QuickAddMount'
 import CallProvider from '@/components/CallProvider'
+import DemoGuard from '@/components/DemoGuard'
 import './globals.css'
 
 // ทรงตัวอักษรคือครึ่งหนึ่งของบุคลิกสไตล์นี้ (doc/TRAPS.md) — ต้องโหลดจริง
@@ -67,6 +68,8 @@ export default function RootLayout({
           ปฏิทินกลางสาย คอมโพเนนต์จะถูก unmount แล้วสายตายทันที
         */}
         <CallProvider>
+          {/* บัญชีตัวอย่าง: แถบบอก + เตะออกเมื่อเปิดแอปใหม่ (components/DemoGuard.tsx) */}
+          <DemoGuard />
           {children}
           {/*
             ⚠️ **แถบล่างต้องอยู่หลัง `children` ใน DOM** (เจ้าของทัก 2 ก.ย. 2026)
