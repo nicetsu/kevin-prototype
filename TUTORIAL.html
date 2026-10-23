@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 /* =====================================================================
-   token ชุดเดียวกับแอปจริง (web/app/globals.css · 9 ก.ย. 2026)
+   token ชุดเดียวกับแอปจริง (web/app/globals.css · 9 ก.ย. 2026 · ธีมสว่าง 23 ต.ค. 2026)
    ⚠️ แก้พาเลตในแอปเมื่อไหร่ ให้ขยับที่นี่ด้วย — คนอ่านคู่มือจบแล้วเข้าแอป
       ต้องจำสีได้ทันที ถ้าคนละชุดกันคู่มือจะสอนสีผิด
    ===================================================================== */
@@ -27,14 +27,55 @@
   --g-comp:linear-gradient(135deg,#E0897E,#A594FF);
   --g-pers:linear-gradient(135deg,#74C6A4,#79C2D0);
   --g-gen:linear-gradient(135deg,#A594FF,#D98BB4);
+  --sched-line:#255A63; --event-line:#5C5228; --due-line:#5E3A35;
+  --task-line:#2C5A48; --note-line:#3A3750; --brand-line:#39316B;
+  color-scheme:dark;
   --r-card:14px; --r-tile:10px; --r-pill:999px;
   --f:"Inter","Noto Sans Thai",system-ui,sans-serif;
   --f-mono:"Geist Mono","Cascadia Mono",Consolas,ui-monospace,monospace;
   --s--2:.69rem; --s--1:.79rem; --s-0:.95rem; --s-1:1.08rem;
   --s-2:clamp(1.35rem,1.1rem + .9vw,1.8rem); --s-3:clamp(2rem,1.5rem + 2.2vw,3rem);
 }
+/* ธีมสว่างของแอป (23 ต.ค. 2026 · :root[data-theme="light"] ใน web/app/globals.css)
+   คู่มือสว่างหรือมืดตามเครื่องของคนอ่าน · แก้สีแอปเมื่อไหร่ต้องแก้ทั้งสองชุดที่นี่ */
+@media (prefers-color-scheme: light){ :root:not([data-theme="dark"]){
+  --bg:#F6F4FB; --surface:#FFFFFF; --raised:#F1EDFB; --line:#E4DEF3; --line-soft:#ECE7F7;
+  --ink:#1A1530; --muted:#565070; --faint:#6B6585;
+  --brand:#6B48D6; --brand-deep:#5A3BC4; --brand-soft:#EEE9FC;
+  --grad-brand:linear-gradient(135deg,#8E74F0 0%,#6B48D6 100%); --on-brand:#FFFFFF;
+  --sched:#26697A; --sched-soft:#E2F0F3;
+  --event:#7A5F18; --event-soft:#F5EEDB;
+  --due:#B03A30;   --due-soft:#F9E5E2;
+  --task:#1E7A54;  --task-soft:#E1F2EA;
+  --note:#6E6888;  --note-soft:#F0EEF5;
+  --g-class:linear-gradient(135deg,#26697A,#6B48D6);
+  --g-comp:linear-gradient(135deg,#B03A30,#6B48D6);
+  --g-pers:linear-gradient(135deg,#1E7A54,#26697A);
+  --g-gen:linear-gradient(135deg,#6B48D6,#B0457E);
+  --sched-line:#BFDDE3; --event-line:#E6D7AE; --due-line:#EDC3BD;
+  --task-line:#B8DFCD; --note-line:#DAD6E6; --brand-line:#D3C8F6;
+  color-scheme:light;
+} }
+:root[data-theme="light"]{
+  --bg:#F6F4FB; --surface:#FFFFFF; --raised:#F1EDFB; --line:#E4DEF3; --line-soft:#ECE7F7;
+  --ink:#1A1530; --muted:#565070; --faint:#6B6585;
+  --brand:#6B48D6; --brand-deep:#5A3BC4; --brand-soft:#EEE9FC;
+  --grad-brand:linear-gradient(135deg,#8E74F0 0%,#6B48D6 100%); --on-brand:#FFFFFF;
+  --sched:#26697A; --sched-soft:#E2F0F3;
+  --event:#7A5F18; --event-soft:#F5EEDB;
+  --due:#B03A30;   --due-soft:#F9E5E2;
+  --task:#1E7A54;  --task-soft:#E1F2EA;
+  --note:#6E6888;  --note-soft:#F0EEF5;
+  --g-class:linear-gradient(135deg,#26697A,#6B48D6);
+  --g-comp:linear-gradient(135deg,#B03A30,#6B48D6);
+  --g-pers:linear-gradient(135deg,#1E7A54,#26697A);
+  --g-gen:linear-gradient(135deg,#6B48D6,#B0457E);
+  --sched-line:#BFDDE3; --event-line:#E6D7AE; --due-line:#EDC3BD;
+  --task-line:#B8DFCD; --note-line:#DAD6E6; --brand-line:#D3C8F6;
+  color-scheme:light;
+}
 *{box-sizing:border-box}
-html{color-scheme:dark;background:var(--bg)}
+html{background:var(--bg)}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f);
   font-size:var(--s-0);line-height:1.78;letter-spacing:-.005em;-webkit-font-smoothing:antialiased}
 .wrap{max-width:980px;margin:0 auto;padding:0 clamp(1.1rem,5vw,2.4rem)}
@@ -79,12 +120,12 @@ tbody tr:hover{background:var(--surface)}
 /* ป้ายชนิดข้อมูล */
 .tag{display:inline-block;font-family:var(--f-mono);font-size:var(--s--2);
   border-radius:var(--r-pill);padding:.05em .6em;border:1px solid transparent;white-space:nowrap}
-.tag--sched{color:var(--sched);background:var(--sched-soft);border-color:#255A63}
-.tag--event{color:var(--event);background:var(--event-soft);border-color:#5C5228}
-.tag--due{color:var(--due);background:var(--due-soft);border-color:#5E3A35}
-.tag--task{color:var(--task);background:var(--task-soft);border-color:#2C5A48}
-.tag--note{color:var(--note);background:var(--note-soft);border-color:#3A3750}
-.tag--brand{color:var(--brand);background:var(--brand-soft);border-color:#39316B}
+.tag--sched{color:var(--sched);background:var(--sched-soft);border-color:var(--sched-line)}
+.tag--event{color:var(--event);background:var(--event-soft);border-color:var(--event-line)}
+.tag--due{color:var(--due);background:var(--due-soft);border-color:var(--due-line)}
+.tag--task{color:var(--task);background:var(--task-soft);border-color:var(--task-line)}
+.tag--note{color:var(--note);background:var(--note-soft);border-color:var(--note-line)}
+.tag--brand{color:var(--brand);background:var(--brand-soft);border-color:var(--brand-line)}
 
 /* ขั้นตอน */
 ol.steps{counter-reset:s;list-style:none;padding:0;margin:1.2rem 0}
@@ -92,7 +133,7 @@ ol.steps>li{counter-increment:s;position:relative;padding:.15rem 0 1rem 2.6rem;m
 ol.steps>li::before{content:counter(s);position:absolute;left:0;top:.28rem;
   width:1.7rem;height:1.7rem;border-radius:var(--r-pill);background:var(--brand-soft);
   color:var(--brand);font-family:var(--f-mono);font-size:var(--s--1);
-  display:grid;place-items:center;border:1px solid #39316B}
+  display:grid;place-items:center;border:1px solid var(--brand-line)}
 
 /* คำเตือน / เคล็ดลับ */
 .note{border-left:2px solid var(--brand);background:var(--brand-soft);
@@ -531,8 +572,7 @@ footer{border-top:1px solid var(--line);margin-top:3.5rem;padding:2rem 0 4rem;co
     <strong>ยังไม่มีในตอนนี้</strong>
     <p class="muted" style="margin-top:.4rem">
       ลืมรหัสผ่าน (ทักเจ้าของให้รีเซ็ตให้) · ลากย้ายในปฏิทิน · ไฟล์แนบ ·
-      ซิงก์กับ Google Calendar · การเตือนซ้ำ (เตือนครั้งเดียวจบ) ·
-      ย้ายโปรเจกต์ข้ามกลุ่มหลังสร้างแล้ว
+      ซิงก์กับ Google Calendar · การเตือนซ้ำ (เตือนครั้งเดียวจบ)
     </p>
   </div>
 </div>
@@ -545,7 +585,7 @@ footer{border-top:1px solid var(--line);margin-top:3.5rem;padding:2rem 0 4rem;co
 
 <footer>
   <div class="wrap" style="padding:0">
-    KeviN · คู่มือผู้ใช้ใหม่ — ปรับปรุง 9 ก.ย. 2026<br>
+    KeviN · คู่มือผู้ใช้ใหม่ — ปรับปรุง 23 ต.ค. 2026<br>
     <span class="faint">ติดตรงไหนหรืออยากได้อะไรเพิ่ม บอกเจ้าของได้เลย</span>
   </div>
 </footer>

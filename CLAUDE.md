@@ -47,7 +47,7 @@ https://kevin-rose.vercel.app · โค้ดอยู่ใน `web/` (Next.js 
 
 | เนื้อหา | ลิงก์ |
 |---|---|
-| **คู่มือผู้ใช้ใหม่ — ส่งลิงก์นี้ให้คนที่เพิ่งได้รหัสเชิญ** (คู่กับ `TUTORIAL.html`) | https://claude.ai/code/artifact/cc814194-2751-473e-9d0c-89e7e183cf3e |
+| **คู่มือผู้ใช้ใหม่ — ส่งลิงก์นี้ให้คนที่เพิ่งได้รหัสเชิญ** (คู่กับ `TUTORIAL.html` · ลิงก์ใหม่ 23 ต.ค. 2026 · ต้องกด Share ก่อนคนอื่นถึงเปิดได้) | https://claude.ai/artifact/9tvzDZP925kgVWnfJRHZBe |
 | ประตูที่สาม · pipeline · เส้นทางข้อมูล · โควตา | https://claude.ai/code/artifact/0453a1ca-a08e-4c7f-b845-314aba3d26a9 |
 | ประตูที่สาม · UX/UI ของแท็บ KeviN | https://claude.ai/code/artifact/0106dd44-993c-48fc-ad90-513c7fcae7b6 |
 | ให้ผู้ช่วยแก้ข้อมูลได้ (คู่กับ `WRITE.html`) | https://claude.ai/code/artifact/42828617-34f1-4631-a13d-d3a7ed4fc278 |
