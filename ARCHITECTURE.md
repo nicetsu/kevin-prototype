@@ -695,7 +695,7 @@ tool_calls    (name · input · ok · rows_out · rows_hidden · error)
 
 ## 9 · ภาษาภาพ
 
-ชื่อสไตล์ **Nightfall** · ธีมมืดอย่างเดียว · token อยู่ใน `doc/globals.css`
+ชื่อสไตล์ **Nightfall** · ธีมมืด + ธีมสว่าง (23 ต.ค. 2026 · `:root[data-theme="light"]` · `lib/theme.ts`) · token อยู่ใน `doc/globals.css`
 
 > **กฎข้อเดียวที่ทุกอย่างตามมา: ม่วงคือสิ่งที่กดได้ · สีที่เหลือคือข้อมูล**
 

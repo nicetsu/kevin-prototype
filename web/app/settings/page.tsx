@@ -5,6 +5,7 @@ import { KEEP_DAYS } from '@/lib/archive'
 import { createClient } from '@/lib/supabase/server'
 import NotificationSetup from './NotificationSetup'
 import TalkSummary from './TalkSummary'
+import ThemePicker from './ThemePicker'
 
 export const dynamic = 'force-dynamic'
 
@@ -67,6 +68,9 @@ export default async function SettingsPage() {
         */}
         <div className="sec"><span>คุยกับ KeviN</span><span /></div>
         <TalkSummary />
+
+        <div className="sec"><span>ธีม</span><span /></div>
+        <ThemePicker />
 
         {/*
           เก็บกวาดทำงานทุกคืนตีสามโดยไม่มีใครเห็น — อย่างน้อยต้องมีที่ให้รู้ว่า

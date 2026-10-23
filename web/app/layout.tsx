@@ -4,6 +4,7 @@ import Nav from '@/components/Nav'
 import QuickAddMount from '@/components/QuickAddMount'
 import CallProvider from '@/components/CallProvider'
 import DemoGuard from '@/components/DemoGuard'
+import { THEME_BOOT, THEME_COLOR } from '@/lib/theme'
 import './globals.css'
 
 // ทรงตัวอักษรคือครึ่งหนึ่งของบุคลิกสไตล์นี้ (doc/TRAPS.md) — ต้องโหลดจริง
@@ -42,7 +43,9 @@ export const metadata: Metadata = {
  *    ทุกครั้งที่แก้ค่านี้ เจ้าของต้องถอนแล้วติดตั้ง PWA ใหม่ถึงจะเห็นผล
  */
 export const viewport: Viewport = {
-  themeColor: '#1B1630',
+  // ค่าตอนวาดครั้งแรก · สคริปต์ธีมเปลี่ยนเป็นสีของธีมที่ใช้อยู่ทันที (lib/theme.ts)
+  // ⚠️ ธีมสว่างมีคู่ของตัวเองใน THEME_COLOR — แก้สีแถบระบบต้องแก้ทั้งสองชุด
+  themeColor: THEME_COLOR.dark,
   width: 'device-width',
   initialScale: 1,
   /*
@@ -61,7 +64,12 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="th" className={`${inter.variable} ${notoThai.variable}`}>
+    // suppressHydrationWarning: `data-theme` ถูกตั้งโดยสคริปต์ก่อน React มาถึง (lib/theme.ts)
+    <html lang="th" className={`${inter.variable} ${notoThai.variable}`} suppressHydrationWarning>
+      <head>
+        {/* ต้องรันก่อนวาด ไม่งั้นธีมสว่างเห็นจอมืดแวบหนึ่งทุกครั้งที่เปิดแอป */}
+        <script dangerouslySetInnerHTML={{ __html: THEME_BOOT }} />
+      </head>
       <body>
         {/*
           สายเสียงอยู่ระดับนี้ ไม่ใช่ในหน้า KeviN — ถ้าเก็บไว้ในหน้า พอสลับไปดู

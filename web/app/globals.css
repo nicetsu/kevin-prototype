@@ -73,7 +73,135 @@
   --t-fast: 140ms;   /* ตอบสนองการแตะ · ติ๊ก · ปุ่มยุบ */
   --t-base: 220ms;   /* แผงเปิดปิด · แถวเข้าออก */
   --t-slow: 320ms;   /* เปลี่ยนหน้า · morph ข้ามหน้า */
+
+  /* ---- ช่องสีสำหรับ rgb(... / alpha) · ต้องตรงกับสีด้านบนเสมอ ----
+     ทุก rgba ที่เคยฝังเลขไว้ใน CSS ย้ายมาอ้างที่นี่ (ธีมสว่าง 23 ต.ค. 2026)
+     **แก้สีชนิดข้อมูลเมื่อไหร่ ต้องแก้ช่องคู่กันตรงนี้ด้วย** ไม่งั้นขอบกับเงาเป็นสีเก่า */
+  --brand-rgb: 165 148 255;
+  --brand-deep-rgb: 136 120 240;
+  --brand-pale-rgb: 195 182 255;
+  --due-rgb: 224 137 126;
+  --sched-rgb: 121 194 208;
+  --event-rgb: 213 187 109;
+  --task-rgb: 116 198 164;
+  --faint-rgb: 142 139 164;
+
+  /* ---- พื้นของแผงลอย (การ์ดร่าง · ป๊อปอัป) และม่านหลังแผง ---- */
+  --float-rgb: 31 25 55;
+  --float-hi-rgb: 46 38 80;
+  --float-lo-rgb: 24 19 45;
+  --ghost-rgb: 36 30 60;
+  --done-rgb: 28 48 42;
+  --scrim-rgb: 10 9 18;
+  --well: #161228;            /* ช่องที่ "จม" ลงไป · ช่องพิมพ์ · ปุ่มแบ่งส่วน · ปุ่มกลม */
+
+  /* ---- เงาและเรือง · ธีมสว่างลดความเข้มด้วยตัวคูณ ไม่ต้องไล่แก้ทีละจุด ---- */
+  --shadow-rgb: 0 0 0;
+  --shadow-a: 1;
+  --glow-a: 1;
+
+  /* ---- ตัวอักษรบนพื้นสี ---- */
+  --on-brand-solid: #12102A;  /* บน --brand ทึบ (ปุ่มหลัก) */
+  --on-due: #2A1210;          /* บน --due ทึบ */
+  --on-bubble: #1E1A3B;       /* บนฟองข้อความฝั่งเรา */
+  --bubble-link: #2A2450;
+  --on-type: #0A0912;         /* เครื่องหมายถูกบนช่องติ๊กสีชนิดข้อมูล */
+  --sched-line: #21444C;
+  --orb-core: #2A2450;
+  --orb-rim: #1D1838;
+
+  /* ---- แสงพื้น (อยู่ที่ html) ---- */
+  --bg-glow-1: rgb(165 148 255 / 0.26);
+  --bg-glow-2: rgb(121 194 208 / 0.20);
+  --bg-glow-3: rgb(136 120 240 / 0.40);
+
   --ease: cubic-bezier(0.22, 0.61, 0.36, 1);   /* ออกตัวเร็ว จบช้า */
+}
+
+/* =====================================================================
+   ธีมสว่าง · "A · แสงเข้มขึ้น" (เจ้าของเลือก 23 ต.ค. 2026 · doc/DECISIONS.md)
+
+   ทับเฉพาะสี · รูปทรง ตัวอักษร จังหวะ ใช้ของ :root ชุดเดียว
+   ตัวสลับคือ `data-theme` บน <html> ซึ่งสคริปต์ใน app/layout.tsx ตั้งก่อนวาด
+   (อัตโนมัติ = ตามเครื่อง · lib/theme.ts) — ไม่มี @media ซ้ำอีกชุด จะได้มีค่าสว่างที่เดียว
+
+   ⚠️ สีชนิดข้อมูลเข้มลงจากธีมมืด ~2 ระดับ เพราะสีเดิมบนพื้นขาวตก AA ทุกสี
+      (ที่มา UXUI-LIGHT.html หัวข้อ 02) · **เพิ่ม token สีใหม่ใน :root เมื่อไหร่
+      ต้องเพิ่มคู่ที่นี่ด้วย** ไม่งั้นธีมสว่างได้สีมืดโผล่มาจุดเดียวเงียบ ๆ
+   ===================================================================== */
+:root[data-theme="light"] {
+  --bg:        #F6F4FB;
+  --surface:   #FFFFFF;
+  --raised:    #F1EDFB;
+  --line:      #E4DEF3;
+  --line-soft: #ECE7F7;
+
+  --ink:   #1A1530;
+  --muted: #565070;
+  --faint: #6B6585;   /* ต่ำสุด 4.8 บน --raised */
+
+  --brand:      #6B48D6;
+  --brand-deep: #5A3BC4;
+  --brand-soft: #EEE9FC;
+  --grad-brand: linear-gradient(135deg, #8E74F0 0%, #6B48D6 100%);
+  --on-brand:   #FFFFFF;
+
+  --sched:      #26697A;
+  --sched-soft: #E2F0F3;
+  --event:      #7A5F18;
+  --event-soft: #F5EEDB;
+  --due:        #B03A30;
+  --due-soft:   #F9E5E2;
+  --task:       #1E7A54;
+  --task-soft:  #E1F2EA;
+  --note:       #6E6888;
+  --note-soft:  #F0EEF5;
+
+  --g-class: linear-gradient(135deg, #26697A 0%, #6B48D6 100%);
+  --g-comp:  linear-gradient(135deg, #B03A30 0%, #6B48D6 100%);
+  --g-pers:  linear-gradient(135deg, #1E7A54 0%, #26697A 100%);
+  --g-gen:   linear-gradient(135deg, #6B48D6 0%, #B0457E 100%);
+
+  --brand-rgb: 107 72 214;
+  --brand-deep-rgb: 90 59 196;
+  --brand-pale-rgb: 142 116 240;
+  --due-rgb: 176 58 48;
+  --sched-rgb: 38 105 122;
+  --event-rgb: 122 95 24;
+  --task-rgb: 30 122 84;
+  --faint-rgb: 107 101 133;
+
+  --float-rgb: 255 255 255;
+  --float-hi-rgb: 255 255 255;
+  --float-lo-rgb: 248 246 253;
+  --ghost-rgb: 241 237 251;
+  --done-rgb: 225 242 234;
+  --scrim-rgb: 26 21 48;
+  --well: #F1EDFB;
+
+  /* เงาบาง (แบบ A) · เงาดำทึบของธีมมืดบนพื้นขาวหนักเกิน จึงอมม่วงและคูณให้จาง */
+  --shadow-rgb: 60 40 140;
+  --shadow-a: 0.3;
+  --glow-a: 0.5;
+
+  --on-brand-solid: #FFFFFF;
+  --on-due: #FFFFFF;
+  --on-bubble: #FFFFFF;
+  --bubble-link: #FFFFFF;
+  --on-type: #FFFFFF;
+  --sched-line: #BFDDE3;
+  --orb-core: #EFEAFD;
+  --orb-rim: #DDD4F8;
+
+  /* แสงเข้มขึ้น (เจ้าของขอ) — ม่วงบนซ้าย · ฟ้าบนขวา · ม่วงขอบล่าง */
+  --bg-glow-1: rgb(124 88 240 / 0.24);
+  --bg-glow-2: rgb(38 140 165 / 0.18);
+  --bg-glow-3: rgb(107 72 214 / 0.26);
+}
+
+/* การ์ดลอยด้วยเงาบาง ๆ แทนเส้นขอบเข้ม (แบบ A) — ธีมมืดไม่มีเงา จึงไม่แตะ */
+:root[data-theme="light"] :is(.hero, .acard, .sheet__panel) {
+  box-shadow: 0 1px 2px rgb(40 25 90 / 0.06), 0 6px 18px -10px rgb(60 40 140 / 0.18);
 }
 
 /*
@@ -217,6 +345,7 @@ html:active-view-transition-type(nav-back) {
 }
 
 html { color-scheme: dark; }
+html[data-theme="light"] { color-scheme: light; }
 
 /*
  * ⚠️ ปิดกรอบไฮไลต์ฟ้าตอนแตะของ Android Chrome (เจ้าของเจอบนเครื่องจริง 1 ก.ย. 2026)
@@ -234,9 +363,9 @@ html { color-scheme: dark; }
 html {
   /* ชั้นแสงอยู่ในพื้นของ `html` โดยตั้งใจ — ดูเหตุผลเต็มที่หัวข้อ "แสงพื้น · ทุกหน้า" */
   background:
-    radial-gradient(58% 22% at 22% 2%,  rgba(165, 148, 255, 0.26), transparent 70%),
-    radial-gradient(52% 20% at 84% 6%,  rgba(121, 194, 208, 0.20), transparent 72%),
-    radial-gradient(96% 34% at 50% 103%, rgba(136, 120, 240, 0.40), transparent 74%),
+    radial-gradient(58% 22% at 22% 2%,  var(--bg-glow-1), transparent 70%),
+    radial-gradient(52% 20% at 84% 6%,  var(--bg-glow-2), transparent 72%),
+    radial-gradient(96% 34% at 50% 103%, var(--bg-glow-3), transparent 74%),
     var(--bg);
   background-attachment: fixed;
   -webkit-tap-highlight-color: transparent;
@@ -264,7 +393,7 @@ body {
   gap: 0.4rem;
   border: 1px solid transparent;
   background: var(--brand);
-  color: #12102A;
+  color: var(--on-brand-solid);
   font-weight: 600;
   font-size: var(--s--1);
   padding: 0.58rem 1.25rem;
@@ -276,11 +405,11 @@ body {
 }
 .btn:hover {
   background: var(--brand-deep);
-  box-shadow: 0 6px 24px -8px rgba(165, 148, 255, 0.75);
+  box-shadow: 0 6px 24px -8px rgb(var(--brand-rgb) / calc(0.75 * var(--glow-a)));
 }
 .btn--ghost { background: transparent; color: var(--brand); border-color: var(--line); }
 .btn--quiet { background: transparent; color: var(--muted); border-color: var(--line); }
-.btn--danger { background: transparent; color: var(--due); border-color: rgba(224, 137, 126, 0.4); }
+.btn--danger { background: transparent; color: var(--due); border-color: rgb(var(--due-rgb) / 0.4); }
 
 @media (prefers-reduced-motion: reduce) {
   .btn { transition: none; }
@@ -421,13 +550,13 @@ html, body { margin: 0; padding: 0; }
   padding: 0.05rem 0.5rem; border-radius: var(--r-pill);
   border: 1px solid transparent; flex: none; align-self: center; white-space: nowrap;
 }
-.tag--late { color: var(--due); border-color: rgba(224, 137, 126, 0.32); }
-.tag--soon { color: var(--due); border-color: rgba(224, 137, 126, 0.32); }
-.tag--sched { color: var(--sched); border-color: rgba(121, 194, 208, 0.32); }
-.tag--event { color: var(--event); border-color: rgba(213, 187, 109, 0.32); }
+.tag--late { color: var(--due); border-color: rgb(var(--due-rgb) / 0.32); }
+.tag--soon { color: var(--due); border-color: rgb(var(--due-rgb) / 0.32); }
+.tag--sched { color: var(--sched); border-color: rgb(var(--sched-rgb) / 0.32); }
+.tag--event { color: var(--event); border-color: rgb(var(--event-rgb) / 0.32); }
 .tag--skip  { color: var(--faint); border-color: var(--line); }
-.tag--task { color: var(--task); border-color: rgba(116, 198, 164, 0.32); }
-.tag--brand { color: var(--brand); border-color: rgba(165, 148, 255, 0.38); }
+.tag--task { color: var(--task); border-color: rgb(var(--task-rgb) / 0.32); }
+.tag--brand { color: var(--brand); border-color: rgb(var(--brand-rgb) / 0.38); }
 .tag--gone  { color: var(--faint); border-color: var(--line); }
 
 /* ทางเข้าของที่เก็บไว้ · ท้ายหน้าคลัง — โทนเงียบเพราะไม่ใช่ปลายทางประจำวัน */
@@ -490,7 +619,7 @@ html, body { margin: 0; padding: 0; }
 
 /* ---- แถบแจ้งข้อผิดพลาด ---- */
 .alert {
-  border: 1px solid rgba(224,137,126,0.4); background: var(--due-soft);
+  border: 1px solid rgb(var(--due-rgb) / 0.4); background: var(--due-soft);
   color: var(--due); border-radius: var(--r-tile);
   padding: 0.6rem 0.8rem; font-size: var(--s--1);
 }
@@ -627,7 +756,7 @@ html, body { margin: 0; padding: 0; }
 .nav__item--talkOn .nav__box {
   color: var(--on-brand);
   background: var(--grad-brand);
-  box-shadow: 0 0 22px -2px rgba(165, 148, 255, 0.55);
+  box-shadow: 0 0 22px -2px rgb(var(--brand-rgb) / calc(0.55 * var(--glow-a)));
 }
 
 /*
@@ -817,13 +946,13 @@ html, body { margin: 0; padding: 0; }
  */
 .seg {
   display: inline-flex; padding: 3px;
-  background: #161228; border: 1px solid rgba(165, 148, 255, 0.2);
+  background: var(--well); border: 1px solid rgb(var(--brand-rgb) / 0.2);
   border-radius: var(--r-pill);
 }
 .seg a { text-decoration: none; color: var(--muted); font-size: var(--s--1); padding: 0.3rem 0.9rem; border-radius: var(--r-pill); }
 .seg a[data-on="true"] {
   background: var(--grad-brand); color: var(--on-brand); font-weight: 600;
-  box-shadow: 0 0 15px -3px rgba(165, 148, 255, 0.9);
+  box-shadow: 0 0 15px -3px rgb(var(--brand-rgb) / calc(0.9 * var(--glow-a)));
 }
 
 .cal-nav { display: flex; gap: 0.35rem; margin-bottom: 0.9rem; }
@@ -868,7 +997,7 @@ html, body { margin: 0; padding: 0; }
 .tagbtn {
   font-family: var(--f-mono); font-size: var(--s--2); letter-spacing: 0.06em;
   line-height: 1.5; padding: 0.05rem 0.6rem; border-radius: var(--r-pill);
-  border: 1px solid rgba(165, 148, 255, 0.38); color: var(--brand);
+  border: 1px solid rgb(var(--brand-rgb) / 0.38); color: var(--brand);
   background: none; cursor: pointer;
   flex: none; align-self: center; white-space: nowrap;
 }
@@ -882,7 +1011,7 @@ html, body { margin: 0; padding: 0; }
               border-radius: var(--r-pill); }
 .seg button[data-on="true"] {
   background: var(--grad-brand); color: var(--on-brand); font-weight: 600;
-  box-shadow: 0 0 15px -3px rgba(165, 148, 255, 0.9);
+  box-shadow: 0 0 15px -3px rgb(var(--brand-rgb) / calc(0.9 * var(--glow-a)));
 }
 
 .weeks { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr));
@@ -891,7 +1020,7 @@ html, body { margin: 0; padding: 0; }
             color: var(--muted); border-radius: 7px; font: inherit;
             font-size: var(--s--2); font-family: var(--f-mono); cursor: pointer; padding: 0; }
 .weeks__b[data-on="true"] { background: var(--brand); border-color: var(--brand);
-                            color: #12102A; font-weight: 600; }
+                            color: var(--on-brand-solid); font-weight: 600; }
 
 .add-slot { margin-top: 0.9rem; }
 .sec--gap { margin-top: 1.6rem; }
@@ -1002,10 +1131,10 @@ button.cb { cursor: pointer; }
   width: 3.1rem; height: 3.1rem; border-radius: var(--r-pill);
   background: var(--grad-brand); color: var(--on-brand); border: none;
   font-size: 1.6rem; line-height: 1; cursor: pointer;
-  box-shadow: 0 0 22px -4px rgba(165, 148, 255, 0.8);
+  box-shadow: 0 0 22px -4px rgb(var(--brand-rgb) / calc(0.8 * var(--glow-a)));
   transition: box-shadow 0.18s ease, transform 0.18s ease;
 }
-.fab:hover { box-shadow: 0 0 30px -2px rgba(165, 148, 255, 0.95); }
+.fab:hover { box-shadow: 0 0 30px -2px rgb(var(--brand-rgb) / calc(0.95 * var(--glow-a))); }
 .fab:active { transform: scale(0.94); }
 @media (prefers-reduced-motion: reduce) { .fab:active { transform: none; } }
 @media (min-width: 768px) { .fab { bottom: 1.5rem; right: 1.5rem; } }
@@ -1024,13 +1153,13 @@ button.cb { cursor: pointer; }
  */
 .set__wipe {
   width: 100%; margin-top: 0.5rem;
-  color: var(--due); border-color: rgba(224, 137, 126, 0.4);
+  color: var(--due); border-color: rgb(var(--due-rgb) / 0.4);
 }
-.set__wipe--armed { background: var(--due); color: #2A1210; border-color: var(--due); font-weight: 600; }
+.set__wipe--armed { background: var(--due); color: var(--on-due); border-color: var(--due); font-weight: 600; }
 
 .sheet {
   position: fixed; inset: 0; z-index: 40;
-  background: rgba(10, 9, 18, 0.72);
+  background: rgb(var(--scrim-rgb) / 0.72);
   display: flex; align-items: flex-end; justify-content: center;
 }
 /*
@@ -1174,7 +1303,7 @@ textarea.input { resize: vertical; line-height: 1.6; font-family: inherit; }
   padding: 0.3rem 0.85rem; border-radius: var(--r-pill);
   border: none; cursor: pointer; white-space: nowrap; flex: none;
   background: var(--grad-brand); color: var(--on-brand);
-  box-shadow: 0 0 15px -3px rgba(165, 148, 255, 0.9);
+  box-shadow: 0 0 15px -3px rgb(var(--brand-rgb) / calc(0.9 * var(--glow-a)));
 }
 /* เครื่องหมายบวกตัวใหญ่กว่าคำ เพื่อให้อ่านออกว่าเป็น "เพิ่ม" ตั้งแต่ยังไม่อ่านคำ */
 .headbtn__plus { font-size: var(--s-0); line-height: 1; margin-top: -1px; }
@@ -1221,7 +1350,7 @@ textarea.input { resize: vertical; line-height: 1.6; font-family: inherit; }
 .acard__badge {
   position: absolute; top: 0.7rem; right: 0.7rem;
   font-family: var(--f-mono); font-size: var(--s--2); color: var(--due);
-  border: 1px solid rgba(224,137,126,0.32); border-radius: var(--r-pill);
+  border: 1px solid rgb(var(--due-rgb) / 0.32); border-radius: var(--r-pill);
   padding: 0 0.4rem;
 }
 
@@ -1240,7 +1369,7 @@ textarea.input { resize: vertical; line-height: 1.6; font-family: inherit; }
   letter-spacing: 0.08em; color: var(--brand);
 }
 .hero__kick--live { color: var(--sched); }
-.hero--live { border-color: rgba(121, 194, 208, 0.35); }
+.hero--live { border-color: rgb(var(--sched-rgb) / 0.35); }
 
 /* ชื่อขึ้นบรรทัดใหญ่ เวลาลงมาอยู่บรรทัดรอง (เจ้าของเคาะ 21 ส.ค.)
    ทำให้ทุกสถานะใช้โครงเดียวกัน รวมงานข้ามวันที่ไม่มี "เวลาเริ่มของวันนี้"
@@ -1285,7 +1414,7 @@ a.hero__afterBody:hover .hero__afterTop { color: var(--brand); }
   padding: 0.2rem 0.7rem; white-space: nowrap;
 }
 .pill--time {
-  color: var(--sched); border-color: rgba(121, 194, 208, 0.32);
+  color: var(--sched); border-color: rgb(var(--sched-rgb) / 0.32);
   font-family: var(--f-mono); letter-spacing: 0.02em;
 }
 
@@ -1294,7 +1423,7 @@ a.hero__afterBody:hover .hero__afterTop { color: var(--brand); }
   margin-bottom: 0.4rem; overflow-wrap: anywhere;
 }
 /* ม่วงคือสิ่งที่กดได้ · ลิงก์ในเนื้อความก็อยู่ใต้กฎเดียวกัน */
-.alink { color: var(--brand); text-decoration: none; border-bottom: 1px solid rgba(165, 148, 255, 0.4); }
+.alink { color: var(--brand); text-decoration: none; border-bottom: 1px solid rgb(var(--brand-rgb) / 0.4); }
 .alink:hover { border-bottom-color: var(--brand); }
 
 /* กำหนดการเป็นรายการที่อ่าน ไม่ใช่วัตถุบนปฏิทิน จึงเป็นสองคอลัมน์เรียบ ๆ
@@ -1489,12 +1618,12 @@ a.hero__afterBody:hover .hero__afterTop { color: var(--brand); }
  * ⚠️ ฝั่งเราตัวอักษรเป็นสีเข้มบนพื้นสว่าง — **กลับด้านจากทั้งแอป**
  *    ลิงก์กับ `.msg__via` ในนั้นจึงต้องเปลี่ยนสีตามด้วย ไม่งั้นจะจมหายไป
  */
-.msg { border: 0; border-radius: 18px; box-shadow: 0 7px 18px -9px rgba(0, 0, 0, 0.8); }
+.msg { border: 0; border-radius: 18px; box-shadow: 0 7px 18px -9px rgb(var(--shadow-rgb) / calc(0.8 * var(--shadow-a))); }
 .msg--me {
   align-self: flex-end; background: var(--grad-brand); color: var(--on-brand);
   border-bottom-right-radius: 6px;
 }
-.msg--me a { color: #2A2450; }
+.msg--me a { color: var(--bubble-link); }
 .msg--ai {
   align-self: flex-start; background: var(--raised);
   border-bottom-left-radius: 6px;
@@ -1549,7 +1678,7 @@ a.hero__afterBody:hover .hero__afterTop { color: var(--brand); }
  *    `#1E1A3B` ได้ 4.73 ที่ปลายเข้มสุดของไล่เฉด — **สีโปร่งใสไม่พอ** ลองแล้ว
  *    ที่ความทึบ 85% ยังได้แค่ 4.39
  */
-.msg--me .msg__via { color: #1E1A3B; }
+.msg--me .msg__via { color: var(--on-bubble); }
 
 /*
  * ป้ายบอกว่าประโยคนี้เคยมีรูปแนบมา · ตัวรูปไม่ได้ถูกเก็บ (lib/chat/image.ts)
@@ -1603,7 +1732,7 @@ a.hero__afterBody:hover .hero__afterTop { color: var(--brand); }
 .shotview {
   position: fixed; inset: 0; z-index: 60;
   display: grid; place-items: center; padding: 1.25rem;
-  background: rgba(10, 8, 18, 0.92); cursor: zoom-out;
+  background: rgb(var(--scrim-rgb) / 0.92); cursor: zoom-out;
   /* ใช้ `reveal-fade` ที่มีอยู่แล้ว ไม่ตั้ง keyframes ใหม่ที่ทำเรื่องเดียวกัน
      · `backwards` ไม่ใช่ `both` — `both` ทิ้ง transform ค้างไว้แล้วฆ่า
      `position: fixed` ของลูก (doc/TRAPS.md) */
@@ -1626,7 +1755,7 @@ a.hero__afterBody:hover .hero__afterTop { color: var(--brand); }
   display: flex; width: fit-content; align-items: center; gap: 0.3rem;
   margin-bottom: 0.35rem; padding: 0.12rem 0.5rem;
   border-radius: var(--r-pill); background: rgba(255, 255, 255, 0.42);
-  font-family: var(--f-mono); font-size: var(--s--2); color: #1E1A3B;
+  font-family: var(--f-mono); font-size: var(--s--2); color: var(--on-bubble);
 }
 
 /*
@@ -1658,7 +1787,7 @@ a.hero__afterBody:hover .hero__afterTop { color: var(--brand); }
   list-style: none; margin: 0; padding: 0.3rem;
   min-width: 15rem; max-width: min(20rem, 90vw);
   background: var(--raised); border: 1px solid var(--line);
-  border-radius: var(--r-card); box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
+  border-radius: var(--r-card); box-shadow: 0 12px 28px rgb(var(--shadow-rgb) / calc(0.45 * var(--shadow-a)));
 }
 .mic__list button {
   display: flex; flex-direction: column; gap: 0.1rem; width: 100%; text-align: left;
@@ -1771,7 +1900,7 @@ a.hero__afterBody:hover .hero__afterTop { color: var(--brand); }
   .talk { padding-bottom: 3.6rem; }
 }
 .composer__field {
-  border-color: rgba(165, 148, 255, 0.26); background: #161228;
+  border-color: rgb(var(--brand-rgb) / 0.26); background: var(--well);
   flex: 1; min-width: 0; font: inherit; font-size: var(--s-0);
   background: var(--surface); border: 1px solid var(--line);
   border-radius: var(--r-pill); padding: 0.6rem 0.9rem; color: var(--ink);
@@ -1830,7 +1959,7 @@ a.hero__afterBody:hover .hero__afterTop { color: var(--brand); }
   width: 2.5rem; height: 2.5rem; flex: none; border-radius: 50%;
   display: grid; place-items: center; border: 0; cursor: pointer;
   background: var(--grad-brand); color: var(--on-brand);
-  box-shadow: 0 0 15px -2px rgba(165, 148, 255, 0.75);
+  box-shadow: 0 0 15px -2px rgb(var(--brand-rgb) / calc(0.75 * var(--glow-a)));
   transition: transform var(--t-fast) var(--ease), opacity var(--t-fast) var(--ease);
 }
 .composer__send:active { transform: scale(0.92); }
@@ -1857,7 +1986,7 @@ a.hero__afterBody:hover .hero__afterTop { color: var(--brand); }
   width: 132px; height: 132px; border-radius: 50%;
   border: 0; position: relative;
   background: var(--grad-brand);
-  box-shadow: 0 0 46px -6px rgba(165, 148, 255, 0.55),
+  box-shadow: 0 0 46px -6px rgb(var(--brand-rgb) / calc(0.55 * var(--glow-a))),
               inset 0 0 26px rgba(255, 255, 255, 0.22);
   display: flex; align-items: center; justify-content: center;
 }
@@ -1875,10 +2004,10 @@ a.hero__afterBody:hover .hero__afterTop { color: var(--brand); }
    ถ้าทำให้ทั้งสองสว่างพร้อมกัน จอจะไม่มีจุดนำสายตา */
 .stage__go {
   margin-top: 0.4rem; padding-left: 1.6rem; padding-right: 1.6rem;
-  background: #161228; color: var(--brand);
-  border: 1px solid rgba(165, 148, 255, 0.35);
+  background: var(--well); color: var(--brand);
+  border: 1px solid rgb(var(--brand-rgb) / 0.35);
 }
-.stage__go:hover { background: var(--brand-soft); box-shadow: 0 0 18px -6px rgba(165, 148, 255, 0.7); }
+.stage__go:hover { background: var(--brand-soft); box-shadow: 0 0 18px -6px rgb(var(--brand-rgb) / calc(0.7 * var(--glow-a))); }
 
 .call__timer {
   display: flex; align-items: center; gap: 0.45rem;
@@ -1900,8 +2029,8 @@ a.hero__afterBody:hover .hero__afterTop { color: var(--brand); }
  *    ฟัง = ม่วงสว่าง (`--brand`) · ตอบ = ม่วงเข้ม (`--brand-deep`)
  *    ถ้าจะเพิ่มตัวแยกอีก ให้เพิ่มที่การเคลื่อนไหว อย่ากลับไปใช้สองสี
  */
-.orb--live  { background: radial-gradient(circle at 50% 45%, #2A2450 0%, #1D1838 70%); box-shadow: 0 0 34px -8px rgba(165, 148, 255, 0.5); }
-.orb--think { background: radial-gradient(circle at 50% 45%, #2A2450 0%, #1D1838 70%); box-shadow: 0 0 34px -8px rgba(136, 120, 240, 0.45); }
+.orb--live  { background: radial-gradient(circle at 50% 45%, var(--orb-core) 0%, var(--orb-rim) 70%); box-shadow: 0 0 34px -8px rgb(var(--brand-rgb) / calc(0.5 * var(--glow-a))); }
+.orb--think { background: radial-gradient(circle at 50% 45%, var(--orb-core) 0%, var(--orb-rim) 70%); box-shadow: 0 0 34px -8px rgb(var(--brand-deep-rgb) / calc(0.45 * var(--glow-a))); }
 
 .wave { display: flex; align-items: center; gap: 4px; height: 42px; }
 .wave u { display: block; width: 4px; border-radius: 2px; }
@@ -1952,7 +2081,7 @@ a.hero__afterBody:hover .hero__afterTop { color: var(--brand); }
 .enter__heat {
   position: absolute; inset: 0; z-index: -1;
   border-radius: 50%; pointer-events: none;
-  border: 1px solid rgba(195, 182, 255, 0.35);
+  border: 1px solid rgb(var(--brand-pale-rgb) / 0.35);
   backdrop-filter: blur(9px) saturate(1.5);
   -webkit-backdrop-filter: blur(9px) saturate(1.5);
   animation: enter-heat 1.3s var(--ease) both;
@@ -1996,8 +2125,8 @@ a.hero__afterBody:hover .hero__afterTop { color: var(--brand); }
  * อยู่ในสายจริง · เอามาใช้ตอนโหลดจะอ่านว่าไมค์เริ่มทำงานแล้วทั้งที่ยังไม่ได้กด
  */
 .orb--wait {
-  background: radial-gradient(circle at 50% 45%, #2A2450 0%, #1D1838 70%);
-  box-shadow: 0 0 34px -8px rgba(136, 120, 240, 0.35);
+  background: radial-gradient(circle at 50% 45%, var(--orb-core) 0%, var(--orb-rim) 70%);
+  box-shadow: 0 0 34px -8px rgb(var(--brand-deep-rgb) / calc(0.35 * var(--glow-a)));
 }
 
 /*
@@ -2029,7 +2158,7 @@ a.hero__afterBody:hover .hero__afterTop { color: var(--brand); }
  */
 .orb--live::after, .orb--think::after {
   content: ""; position: absolute; inset: -2px; border-radius: 50%;
-  border: 1px solid rgba(165, 148, 255, 0.55);
+  border: 1px solid rgb(var(--brand-rgb) / 0.55);
   animation: orb-ring 720ms var(--ease) both;
 }
 @keyframes orb-ring {
@@ -2067,10 +2196,10 @@ a.hero__afterBody:hover .hero__afterTop { color: var(--brand); }
  *    วัดบนจอ 360×640 ทุกครั้งที่แตะความสูงของการ์ด (ARCHITECTURE.md §7)
  */
 .dcard {
-  border: 1px solid rgba(165, 148, 255, 0.42);
+  border: 1px solid rgb(var(--brand-rgb) / 0.42);
   border-radius: 14px;
-  background: linear-gradient(180deg, rgba(46, 38, 80, 0.96), rgba(31, 25, 55, 0.96));
-  box-shadow: 0 10px 30px -14px rgba(0, 0, 0, 0.7);
+  background: linear-gradient(180deg, rgb(var(--float-hi-rgb) / 0.96), rgb(var(--float-rgb) / 0.96));
+  box-shadow: 0 10px 30px -14px rgb(var(--shadow-rgb) / calc(0.7 * var(--shadow-a)));
   padding: 0.6rem 0.7rem;
   display: flex; flex-direction: column; gap: 0.4rem;
   /* ร่างยาว ๆ เลื่อนในตัวเอง ไม่ยืดฉากจนของอื่นตกจอ */
@@ -2097,7 +2226,7 @@ a.hero__afterBody:hover .hero__afterTop { color: var(--brand); }
 /* ค่าเดิมขีดฆ่าไว้ข้างหน้าค่าใหม่ — ทานได้ในบรรทัดเดียวว่าเปลี่ยนจากอะไร */
 .dcard__was {
   color: var(--faint); font-weight: 400; margin-right: 0.4rem;
-  text-decoration-color: rgba(142, 139, 164, 0.7);
+  text-decoration-color: rgb(var(--faint-rgb) / 0.7);
 }
 
 .dcard__err { margin: 0.15rem 0 0; font-size: var(--s--2); color: var(--due); }
@@ -2119,8 +2248,8 @@ a.hero__afterBody:hover .hero__afterTop { color: var(--brand); }
 .dstack__ghost {
   position: absolute; left: 6px; right: 6px; height: 100%;
   border-radius: 14px; pointer-events: none;
-  border: 1px solid rgba(165, 148, 255, 0.22);
-  background: rgba(36, 30, 60, 0.6);
+  border: 1px solid rgb(var(--brand-rgb) / 0.22);
+  background: rgb(var(--ghost-rgb) / 0.6);
 }
 /* ยกขึ้นไปข้างบนทีละนิด ให้เห็นขอบโผล่พ้นใบหน้าเหมือนกองกระดาษ */
 .dstack__ghost--a { top: -5px; }
@@ -2163,15 +2292,15 @@ a.hero__afterBody:hover .hero__afterTop { color: var(--brand); }
 /* ---- หลังยืนยันแล้ว — การ์ดกลายเป็นคำยืนยันผล พร้อมทางถอย ---- */
 .dcard--done {
   flex-direction: row; align-items: center; justify-content: space-between;
-  gap: 0.6rem; border-color: rgba(116, 198, 164, 0.4);
-  background: rgba(28, 48, 42, 0.6); max-height: none;
+  gap: 0.6rem; border-color: rgb(var(--task-rgb) / 0.4);
+  background: rgb(var(--done-rgb) / 0.6); max-height: none;
 }
 .dcard__ok {
   display: flex; align-items: center; gap: 0.45rem;
   font-size: var(--s--1); color: var(--task); font-weight: 600;
 }
 .dcard__undo {
-  flex: none; border: 1px solid rgba(116, 198, 164, 0.4); border-radius: var(--r-pill);
+  flex: none; border: 1px solid rgb(var(--task-rgb) / 0.4); border-radius: var(--r-pill);
   padding: 0.25rem 0.7rem; background: none; color: var(--task);
   font: inherit; font-size: var(--s--2); cursor: pointer;
 }
@@ -2192,9 +2321,9 @@ a.hero__afterBody:hover .hero__afterTop { color: var(--brand); }
   pointer-events: auto;
   width: min(30rem, 100% - 1.6rem);
   max-height: 60vh; overflow-y: auto;
-  background: linear-gradient(180deg, rgba(31, 25, 55, 0.98), rgba(24, 19, 45, 0.98));
-  border: 1px solid rgba(165, 148, 255, 0.35); border-radius: 18px;
-  box-shadow: 0 16px 40px -18px rgba(0, 0, 0, 0.9);
+  background: linear-gradient(180deg, rgb(var(--float-rgb) / 0.98), rgb(var(--float-lo-rgb) / 0.98));
+  border: 1px solid rgb(var(--brand-rgb) / 0.35); border-radius: 18px;
+  box-shadow: 0 16px 40px -18px rgb(var(--shadow-rgb) / calc(0.9 * var(--shadow-a)));
   padding: 0.7rem 0.8rem 0.8rem;
   display: flex; flex-direction: column; gap: 0.5rem;
   animation: dpop-in var(--t-base) var(--ease) both;
@@ -2207,10 +2336,10 @@ a.hero__afterBody:hover .hero__afterTop { color: var(--brand); }
   position: fixed; left: 50%; transform: translateX(-50%); z-index: 19;
   bottom: calc(4.9rem + env(safe-area-inset-bottom));
   display: flex; align-items: center; gap: 0.45rem;
-  border: 1px solid rgba(165, 148, 255, 0.4); border-radius: var(--r-pill);
-  background: rgba(31, 25, 55, 0.97); color: var(--ink);
+  border: 1px solid rgb(var(--brand-rgb) / 0.4); border-radius: var(--r-pill);
+  background: rgb(var(--float-rgb) / 0.97); color: var(--ink);
   font: inherit; font-size: var(--s--1); padding: 0.35rem 0.9rem;
-  cursor: pointer; box-shadow: 0 8px 24px -14px rgba(0, 0, 0, 0.9);
+  cursor: pointer; box-shadow: 0 8px 24px -14px rgb(var(--shadow-rgb) / calc(0.9 * var(--shadow-a)));
   animation: dpop-in var(--t-fast) var(--ease) both;
 }
 .dfold__dot { width: 6px; height: 6px; border-radius: 50%; background: var(--brand); flex: none; }
@@ -2233,13 +2362,13 @@ a.hero__afterBody:hover .hero__afterTop { color: var(--brand); }
  */
 .dsheet {
   position: fixed; inset: 0; z-index: 46;
-  background: rgba(8, 6, 18, 0.55);
+  background: rgb(var(--scrim-rgb) / 0.55);
   display: flex; align-items: flex-end;
 }
 .dsheet__panel {
   width: 100%; max-height: 72vh; overflow-y: auto;
-  background: linear-gradient(180deg, rgba(31, 25, 55, 0.99), rgba(24, 19, 45, 0.99));
-  border-top: 1px solid rgba(165, 148, 255, 0.35);
+  background: linear-gradient(180deg, rgb(var(--float-rgb) / 0.99), rgb(var(--float-lo-rgb) / 0.99));
+  border-top: 1px solid rgb(var(--brand-rgb) / 0.35);
   border-radius: 18px 18px 0 0;
   padding: 0.8rem 1rem calc(1rem + env(safe-area-inset-bottom));
   display: flex; flex-direction: column; gap: 0.6rem;
@@ -2267,7 +2396,7 @@ a.hero__afterBody:hover .hero__afterTop { color: var(--brand); }
 @media (min-width: 768px) {
   .dsheet { align-items: center; justify-content: center; }
   .dsheet__panel {
-    max-width: 26rem; border-radius: 18px; border: 1px solid rgba(165, 148, 255, 0.35);
+    max-width: 26rem; border-radius: 18px; border: 1px solid rgb(var(--brand-rgb) / 0.35);
     padding-bottom: 1rem;
   }
 }
@@ -2291,16 +2420,16 @@ a.hero__afterBody:hover .hero__afterTop { color: var(--brand); }
 }
 .callbtn i {
   width: 3rem; height: 3rem; border-radius: 50%; display: grid; place-items: center;
-  background: #161228; border: 1px solid rgba(165, 148, 255, 0.3);
+  background: var(--well); border: 1px solid rgb(var(--brand-rgb) / 0.3);
   transition: transform var(--t-fast) var(--ease), box-shadow var(--t-fast) var(--ease);
 }
 .callbtn:active i { transform: scale(0.92); }
 .callbtn span { font-family: var(--f-mono); font-size: var(--s--2); color: var(--faint); }
 .callbtn--muted { color: var(--due); }
-.callbtn--muted i { border-color: rgba(224, 137, 126, 0.45); }
+.callbtn--muted i { border-color: rgb(var(--due-rgb) / 0.45); }
 .callbtn--end i {
-  background: var(--due); border-color: var(--due); color: #2A1210;
-  box-shadow: 0 0 18px -3px rgba(224, 137, 126, 0.75);
+  background: var(--due); border-color: var(--due); color: var(--on-due);
+  box-shadow: 0 0 18px -3px rgb(var(--due-rgb) / 0.75);
 }
 @media (prefers-reduced-motion: reduce) { .callbtn:active i { transform: none; } }
 
@@ -2363,8 +2492,8 @@ a.hero__afterBody:hover .hero__afterTop { color: var(--brand); }
 
 .call__bar { display: flex; gap: 0.6rem; width: 100%; max-width: 22rem; margin-top: 0.3rem; }
 .call__bar > * { flex: 1; }
-.btn--end { background: var(--due-soft); color: var(--due); border-color: rgba(224,137,126,0.4); }
-.btn--end:hover { background: var(--due-soft); box-shadow: 0 6px 24px -8px rgba(224,137,126,0.5); }
+.btn--end { background: var(--due-soft); color: var(--due); border-color: rgb(var(--due-rgb) / 0.4); }
+.btn--end:hover { background: var(--due-soft); box-shadow: 0 6px 24px -8px rgb(var(--due-rgb) / 0.5); }
 
 /*
  * หน้าประวัติการคุย
@@ -2380,7 +2509,7 @@ a.hero__afterBody:hover .hero__afterTop { color: var(--brand); }
   border: 1px solid var(--line); border-radius: 12px;
   background: var(--card); color: inherit; text-decoration: none;
 }
-.hrow:hover { border-color: rgba(165, 148, 255, 0.4); }
+.hrow:hover { border-color: rgb(var(--brand-rgb) / 0.4); }
 
 .hrow__via {
   flex: none; margin-top: 0.1rem;
@@ -2388,7 +2517,7 @@ a.hero__afterBody:hover .hero__afterTop { color: var(--brand); }
   border: 1px solid var(--line); border-radius: 99px;
   padding: 0.1rem 0.5rem; color: var(--faint);
 }
-.hrow__via--voice { color: var(--brand); border-color: rgba(165, 148, 255, 0.4); }
+.hrow__via--voice { color: var(--brand); border-color: rgb(var(--brand-rgb) / 0.4); }
 
 /* ⚠️ ต้อง `min-width: 0` ไม่งั้นข้อความยาวดันแถวจนล้นออกนอกจอ */
 .hrow__body { display: flex; flex-direction: column; gap: 0.15rem; min-width: 0; flex: 1; }
@@ -2420,7 +2549,7 @@ a.hero__afterBody:hover .hero__afterTop { color: var(--brand); }
   display: flex; align-items: center; gap: 0.5rem;
   font: inherit; font-family: var(--f-mono); font-size: var(--s--2);
   color: var(--sched); background: var(--sched-soft);
-  border: 1px solid #21444C; border-radius: var(--r-pill);
+  border: 1px solid var(--sched-line); border-radius: var(--r-pill);
   padding: 0.4rem 0.9rem; cursor: pointer; white-space: nowrap;
 }
 .callbar__hint { color: var(--faint); }

@@ -315,7 +315,7 @@ export default function ItemList({ rows, limit }: { rows: Row[]; limit?: number 
                 >
                   {done && (
                     <svg width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-                      <path d="M2.5 6.2 4.8 8.5 9.5 3.8" stroke="#0A0912" strokeWidth="2"
+                      <path d="M2.5 6.2 4.8 8.5 9.5 3.8" style={{ stroke: 'var(--on-type)' }} strokeWidth="2"
                         strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   )}
